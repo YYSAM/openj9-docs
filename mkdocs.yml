@@ -96,33 +96,33 @@ markdown_extensions:
 # nav:   # "pages:" --> "nav:" for MkDocs 1.0
 pages:
 
-    - "About"                                                                    : index.md
-    - "AdoptOpenJDK builds"                                                      : adoptopenjdk.md
-    - "Getting started"                                                          : introduction.md
-    - "New to OpenJ9?"                                                           : openj9_newuser.md
+    - "关于"                                                                    : index.md
+    - "AdoptOpenJDK 构建"                                                      : adoptopenjdk.md
+    - "开始介绍"                                                          : introduction.md
+    - "第一次使用OpenJ9?"                                                           : openj9_newuser.md
 
-    - "Release notes" :
+    - "发布记录" :
         - "Version 0.15.1"                                                       : version0.15.md
         - "Version 0.14.0"                                                       : version0.14.md
         - "Version 0.13.0"                                                       : version0.13.md
-        - "Earlier releases" :
+        - "早期版本" :
             - "Version 0.12.0"                                                   : version0.12.md
             - "Version 0.11.0"                                                   : version0.11.md
             - "Version 0.10.0"                                                   : version0.10.md
             - "Version 0.9.0"                                                    : version0.9.md
             - "Version 0.8.0"                                                    : version0.8.md
 
-    - "Garbage Collection"                                                       : gc.md
+    - "垃圾收集器"                                                       : gc.md
 
-    - "JIT Compiler"                                                             : jit.md
+    - "JIT 编译器"                                                             : jit.md
 
-    - "AOT Compiler"                                                             : aot.md
+    - "AOT 编译器"                                                             : aot.md
 
-    - "Class data sharing"                                                       : shrc.md
+    - "类相关数据的共享"                                                       : shrc.md
 
-    - "Diagnostics" :
+    - "诊断" :
 
-        - "Overview"                                                             : diag_overview.md
+        - "介绍"                                                             : diag_overview.md
 
         - "Dumps" :
 #          Move dump agents, events, xdump builder from -Xdump (link to -Xdump for detail) then...
@@ -140,31 +140,31 @@ pages:
 #            - "Application trace"                                                :   trace_aplication.md  (to be written)
 #            - "Method trace"                                                     :   trace_method.md  (to be written)
 
-        - "Tools" :
+        - "工具" :
 #              3rd party tools topic for IBM monitoring & diag tools & Eclipse MA (take from New to OpenJ9), then...
-            - "Dump extractor"                                                   : tool_jextract.md
-            - "Dump viewer"                                                      : tool_jdmpview.md
-            - "Trace formatter"                                                  : tool_traceformat.md
-            - "Option builder"                                                   : tool_builder.md
-            - "Java memory map (jmap) tool"                                      : tool_jmap.md
-            - "Java process status (jps)"                                        : tool_jps.md
-            - "Java stack (jstack) tool"                                         : tool_jstack.md
-            - "Switching to OpenJ9"                                              : tool_migration.md
+            - "Dump 提取器"                                                   : tool_jextract.md
+            - "Dump 预览工具"                                                      : tool_jdmpview.md
+            - "跟踪的格式"                                                  : tool_traceformat.md
+            - "选项构建器"                                                   : tool_builder.md
+            - "Java内存映射(jmap)工具"                                      : tool_jmap.md
+            - "Java进程状态(jps)"                                        : tool_jps.md
+            - "Java栈(jstack)工具"                                         : tool_jstack.md
+            - "切换到OpenJ9"                                              : tool_migration.md
 
-        - "Interfaces" :
+        - "接口" :
             - "JVMTI"                                                            : interface_jvmti.md
 #            - "MXBeans"                                                          : interface_mxbeans.md
             - "DTFJ"                                                             : interface_dtfj.md
 
-    - "Command-line options" :
-        - "Specifying options"                                                   : cmdline_specifying.md
-        - "Standard options"                                                     : cmdline_general.md
-        - "Switching to OpenJ9"                                                  : cmdline_migration.md
+    - "命令行选项" :
+        - "特殊选项"                                                   : cmdline_specifying.md
+        - "标准选项"                                                     : cmdline_general.md
+        - "切换到OpenJ9"                                                  : cmdline_migration.md
 
 # System properties that are commented out are not supported at this time.
 
-        - "System property options" :
-            - "Using System properties"                                          : d_jvm_commands.md
+        - "系统属性的选项" :
+            - "使用系统属性"                                          : d_jvm_commands.md
             - "-Dcom.ibm.enableClassCaching"                                     : dcomibmenableclasscaching.md
             - "-Dcom.ibm.enableLegacyDumpSecurity"                               : dcomibmenablelegacydumpsecurity.md
             - "-Dcom.ibm.enableLegacyLogSecurity"                                : dcomibmenablelegacylogsecurity.md
@@ -185,7 +185,7 @@ pages:
             - "-Djdk.nativeGCM"                                                  : djdknativegcm.md
             - "-Djdk.nativeRSA"                                                  : djdknativersa.md
 
-        - "JVM -X options" :
+        - "JVM -X 选项" :
             - "Using -X options"                                                 : x_jvm_commands.md
             - "-X"                                                               : x.md
             - "-Xaggressive"                                                     : xaggressive.md
@@ -297,7 +297,7 @@ pages:
             - "-Xverify"                                                         : xverify.md
             - "-Xzero"                                                           : xzero.md
 
-        - "JVM -XX options" :
+        - "JVM -XX 选项" :
             - "Using -XX options"                                                : xx_jvm_commands.md
             - "-XXActiveProcessorCount"                                          : xxactiveprocessorcount.md
             - "-XXallowvmshutdown"                                               : xxallowvmshutdown.md
@@ -343,11 +343,11 @@ pages:
             - "-XX:[+|-]VerboseVerification"                                     : xxverboseverification.md
             - "-XX:[+|-]VMLockClassLoader"                                       : xxvmlockclassloader.md
 
-    - " Reference" :
-        - "Supported environments"                                                : openj9_support.md
-        - "Default settings"                                                      : openj9_defaults.md
-        - "Directory conventions"                                                 : openj9_directories.md
-        - "OpenJ9 messages"                                                       : messages_intro.md
-        - "Environment variables"                                                 : env_var.md
+    - " 参考" :
+        - "环境支持"                                                : openj9_support.md
+        - "默认设置"                                                      : openj9_defaults.md
+        - "目录约定"                                                 : openj9_directories.md
+        - "OpenJ9消息"                                                       : messages_intro.md
+        - "环境变量"                                                 : env_var.md
 
-    - "Legal"                                                                     : legal.md
+    - "法律法规"                                                                     : legal.md
