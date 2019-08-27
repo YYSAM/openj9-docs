@@ -40,7 +40,7 @@
 
 ## 环境支持
 
-非常广泛的硬件和操作系统都支持包含 OpenJ9 VM 的 OpenJDK 二进制文件。 这个范围随着 Eclipse基金会的工作进展而扩大。 有关详细信息，请参阅[当前支持的环境列表](openj9_support.md)。
+大量常见的硬件和流行的操作系统都支持包含 OpenJ9 VM 的 OpenJDK 二进制文件。 这个范围随着 Eclipse基金会的工作进展而扩大。 有关详细信息，请参阅[当前支持的环境列表](openj9_support.md)。
 
 <i class="fa fa-pencil-square-o" aria-hidden="true"></i> **注意:** 本用户指南包含有关在 z/OS&reg; 平台上配置、调优和调试 OpenJ9的信息。 这些内容是由 IBM 贡献的，因此当为 z/OS&reg; 平台创建 OpenJDK 二进制文件的工作完成时，这些内容将变得可用。
 
