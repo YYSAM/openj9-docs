@@ -26,24 +26,20 @@
 <img src="https://github.com/eclipse/openj9/blob/master/artwork/OpenJ9.svg" alt="OpenJ9 logo" align="middle" width="50%" height="50%" />
 <p>
 
-# Eclipse OpenJ9 user documentation
+# Eclipse OpenJ9 用户文档
 
 [![Build Status](https://ci.eclipse.org/openj9/buildStatus/icon?job=Build-Doc-Push_to_Eclipse)](https://ci.eclipse.org/openj9/job/Build-Doc-Push_to_Eclipse)
 
 [![License](https://img.shields.io/badge/License-EPL%202.0-green.svg)](https://opensource.org/licenses/EPL-2.0)
 [![License](https://img.shields.io/badge/License-APL%202.0-green.svg)](https://opensource.org/licenses/Apache-2.0)
 
-This repository contains the source files for the [Eclipse OpenJ9 user documentation](http://www.eclipse.org/openj9/docs).
-The user documentation tells you how to configure, tune, and diagnose problems with
-an OpenJDK that has been built with the OpenJ9 Java virtual machine.
+这个仓库包含[Eclipse OpenJ9 用户文档](http://www.eclipse.org/openj9/docs)用户文档的源文件。该文档告诉您如何配置、调优和诊断这个使用OpenJ9虚拟机构建的OpenJDK相关的问题。
 
-New to Eclipse OpenJ9? Here are a few links to get you started:
+如果您是第一次接触Eclipse OpenJ9? 下面的这些链接可以给您提供参考和入门:
 
-- Visit the [Eclipse OpenJ9 website](http://www.eclipse.org/openj9) to find out more.
-- Grab an OpenJDK binary that embeds OpenJ9 from  [AdoptOpenJDK](https://adoptopenjdk.net/releases.html?variant=openjdk8&jvmVariant=openj9).
+- 访问 [Eclipse OpenJ9 网站](http://www.eclipse.org/openj9) 获得更多的信息.
+- 可以从[AdoptOpenJDK](https://adoptopenjdk.net/releases.html?variant=openjdk8&jvmVariant=openj9)获取一个OpenJDK的二进制下载文件, 其已经嵌入好OpenJ9.
 
-The files in this repository are authored in markdown format and built using
-[Mkdocs](http://www.mkdocs.org/) with the [MkDocs-material theme](https://squidfunk.github.io/mkdocs-material/). Draft documentation for the next release is hosted via the gh-pages branch of this repository at the following URL: https://eclipse.github.io/openj9-docs/).
+此存储库中的文件是以 [markdown](http://www.mkdocs.org/)  格式编写的，并使用 [Mkdocs-material主题](https://squidfunk.github.io/mkdocs-material/)构建。 下一版本的文档草稿存储在当前存储库的 gh-pages 分支, 其目前托管在下面的 URL: https://eclipse.github.io/openj9-docs/)。
 
-We welcome contributions to the user documentation. Please follow our
-[Contribution guidelines](CONTRIBUTING.md).
+我们欢迎您贡献到这个用户文档, 请参考我们的[贡献指南](CONTRIBUTING.md).
