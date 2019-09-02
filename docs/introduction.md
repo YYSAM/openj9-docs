@@ -24,40 +24,39 @@
 
 # Eclipse OpenJ9
 
-OpenJ9 is a high performance, scalable, Java&trade; virtual machine (VM) implementation that is fully compliant with the [Java Virtual Machine Specification](https://docs.oracle.com/javase/specs/index.html).
+OpenJ9是一种高性能，可扩展的Java&trade;虚拟机（VM）实现，完全符合[Java虚拟机规范](https://docs.oracle.com/javase/specs/index.html).
 
-At run time, the VM interprets the Java bytecode that is compiled by the Java compiler. The VM acts as a translator between the language and the underlying operating system and hardware. A Java program requires a specific VM to run on a particular platform, such as Linux&reg;, z/OS&reg;, or Windows&trade;.
+在运行时，这VM去解释由Java编译器编译的Java字节码, 同时VM做为语言与底层操作系统和硬件之间的转换器。一个Java程序需要特定的VM在特定平台上运行，例如Linux&reg;，z/OS&reg;或Windows&trade;。
 
-This reference material provides information about the VM configuration and tuning options, together with the default settings.
+此参考资料提供有关VM配置和调优选项的信息以及默认设置。
 
+## 配置你的系统
 
-## Configuring your system
+对于正常的操作，必须在操作系统级别设置某些环境变量。您可能还需要设置允许VM利用硬件和操作系统特性的其他配置选项，具体取决于您的系统环境。阅读[自定义您的系统](https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.vm.80.doc/docs/j9_configure.html)去了解有关以下选项的更多信息：
 
-For normal operation, certain environment variables must be set at the operating system level. Depending on your system environment, you might also want to set other configuration options that allow the VM to exploit hardware and operating system features. Read [Customizing your system](https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.vm.80.doc/docs/j9_configure.html) to learn more about the following options:
+- 设置PATH和CLASSPATH环境变量。
+- 设置LIBPATH或LD_LIBRARY_PATH环境变量（AIX&reg;和Linux）去指明在何处查找共享库。
+- 在AIX和Linux系统上设置ulimits，以确保操作系统为您的应用程序分配足够的资源。
+- 在z/OS系统上设置区域大小，BPXPRM参数和LanguageEvvironment&reg;运行时选项。
+- 如果应用程序分配大量内存并经常访问该内存，则可能需要在系统上启用大页面支持。请参阅[大内存页的分配](https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.vm.80.doc/docs/j9_configure_large_page.html)。
+- 在AIX系统上配置动态LPAR的支持。
 
-- Setting the PATH and CLASSPATH environment variable.
-- Setting the LIBPATH or LD_LIBRARY_PATH environment variable (AIX&reg; and Linux) to indicate where to find shared libraries.
-- Setting ulimits on AIX and Linux systems to ensure that the operating system allocates sufficient resources for your application.
-- Setting region size, BPXPRM parameters, and Language Environment&reg; runtime options on z/OS systems.
-- If your application allocates a large amount of memory and frequently accesses that memory, you might want to enable large page support on your system. See [Configuring large page memory allocation](https://www.ibm.com/support/knowledgecenter/SSYKE2_8.0.0/com.ibm.java.vm.80.doc/docs/j9_configure_large_page.html).
-- Configuring Dynamic LPAR support on AIX systems.
+<i class="fa fa-pencil-square-o" aria-hidden="true"></i> **注意**：在macOS&reg;系统上，必须设置DYLD_LIBRARY_PATH环境变量以指明在何处查找共享库。此外，为确保有适合您的应用足够的资源，您可能需要提高系统的限制, 例如`launchctl`，`ulimit`或`kern.<VARIABLES>`。有关详细说明，请参阅macOS版本的发布文档。
 
-<i class="fa fa-pencil-square-o" aria-hidden="true"></i> **Note:** On macOS&reg; systems, you must set the DYLD_LIBRARY_PATH environment variable to indicate where to find shared libraries. In addition, to ensure there are sufficient resources for your application, you might need to increase system limits by using `launchctl`, `ulimit`, or `kern.<VARIABLES>`. For further instructions, refer to the documentation for your macOS release.  
+## 性能调优
 
-## Performance tuning
+OpenJ9初始配置了一系列的默认选项，这些选项可以为具有典型工作负载场景的Java应用程序提供最佳运行时环境。但是，如果您的应用程序是运行在某些特殊的场景，则可以通过参数调整OpenJ9 VM来提高性能。同样您还可以通过在应用程序代码, 来启用硬件功能或使用特定API来提高性能。
 
-OpenJ9 is configured to start with a set of default options that provide the optimal runtime environment for Java applications with typical workloads. However, if your application is atypical, you can improve performance by tuning the OpenJ9 VM. You can also improve performance by enabling hardware features or using specific APIs in your application code.
+### 垃圾收集策略
+OpenJ9包含几个垃圾收集策略。要了解有关这些策略和更多的负载类型等信息, 以及如何从中收益，请参阅[垃圾收集](gc.md)。
 
-### Garbage collection policies
-OpenJ9 includes several garbage collection policies. To learn more about these policies and the types of application workload that can benefit from them, see [Garbage Collection](gc.md).
+### 类数据共享
+你可以共享你的类数据在运行中的多个VM之间, 当VM第一次启动的时候会创建和缓存相关的数据, 这样可以减少启动时间. 更多的信息, 请参考[类数据共享](shrc.md)。
 
-### Class data sharing
-You can share class data between running VMs, which can reduce the startup time for a VM once the cache has been created. For more information, see [Class Data Sharing](shrc.md).
+### 本地数据操作
+如果你的Java程序需要操作本地数据, 可以考虑让你的应用程序使用Data Access Accelerator 的相关API。
 
-### Native data operations
-If your Java application manipulates native data, consider writing your application to take advantage of methods in the Data Access Accelerator API.
-
-### Cloud optimizations  
+### 云的优化
 To improve the performance of applications that run in containers, try setting the following tuning options:
 
   - Use a shared classes cache (`-Xshareclasses -XX:SharedCacheHardLimit=200m -Xscmx60m`) with Ahead-Of-Time (AOT) compilation to improve your startup time. For more information, see [Class Data Sharing](shrc.md) and [AOT Compiler](aot.md).
