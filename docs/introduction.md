@@ -68,7 +68,7 @@ OpenJ9 VM会自动检测它何时在docker容器中运行，并使用一种机�
 
 OpenJDK默认使用内置的Java加密类进行了实现。但是，本地系统加密实现通常可提供更好的性能。OpenSSL是一种用于传输层安全性（TLS）和安全套接字层（SSL）协议的本机开源加密工具包，它已经很好地建立并与许多企业应用程序一起使用。目前，Digest，CBC，GCM和RSA算法支持OpenSSL V1.0.x和V1.1.x实现。ChaCha20和ChaCha20-Poly1305算法也支持OpenSSL V1.1.x实现。
 
-<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> **Restriction:** ![Start of content that applies to Java 8 and later](cr/java8plus.png) 由于问题 [#5611](https://github.com/eclipse/openj9/issues/5611), 这种摘要算法是被禁止的. ![End of content that applies to Java 8 and later)](cr/java_close_lts.png)
+<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> **限制:** ![Start of content that applies to Java 8 and later](cr/java8plus.png) 由于问题 [#5611](https://github.com/eclipse/openj9/issues/5611), 这种摘要算法是被禁止的. ![End of content that applies to Java 8 and later)](cr/java_close_lts.png)
 
 在Linux和AIX平台上，可以在系统路径上找到OpenSSL 1.0.x或1.1.x的相关库。如果使用安装包管理器安装的OpenSSL，系统路径将自动配置更新好。在其他平台上，OpenSSL 1.1.x库目前与AdoptOpenJDK中的二进制文件捆绑在一起。
 
