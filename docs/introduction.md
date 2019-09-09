@@ -56,71 +56,68 @@ OpenJ9包含几个垃圾收集策略。要了解有关这些策略和更多的�
 ### 本地数据操作
 如果你的Java程序需要操作本地数据, 可以考虑让你的应用程序使用Data Access Accelerator 的相关API。
 
-### 云的优化
-To improve the performance of applications that run in containers, try setting the following tuning options:
+### 云端的优化
+要提高在容器中运行的应用程序的性能，请尝试设置以下调整选项：
 
-  - Use a shared classes cache (`-Xshareclasses -XX:SharedCacheHardLimit=200m -Xscmx60m`) with Ahead-Of-Time (AOT) compilation to improve your startup time. For more information, see [Class Data Sharing](shrc.md) and [AOT Compiler](aot.md).
-  - Use the [-Xtune:virtualized](xtunevirtualized.md) option, which configures OpenJ9 for typical cloud deployments where VM guests are provisioned with a small number of virtual CPUs to maximize the number of applications that can be run. When enabled, OpenJ9 adapts its internal processes to reduce the amount of CPU consumed and trim down the memory footprint. These changes come at the expense of only a small loss in throughput.
+  - 配置 (`-Xshareclasses -XX:SharedCacheHardLimit=200m -Xscmx60m`) 来使用带有Ahead-Of-Time（AOT）编译的共享类. 更多的信息请参考 [类数据共享](shrc.md) 和 [AOT编译器](aot.md).
+  - 使用 [-Xtune:virtualized](xtunevirtualized.md) 选项, 该选项将OpenJ9配置为云部署的标准模式，其中VM虚拟机配置了少量虚拟CPU，以最大限度地增加可运行的应用程序的数量。开启后，OpenJ9会调整其内部进程以减少CPU消耗量并减少内存占用。这些变化的代价是损失很小的吞吐量。
+  
+OpenJ9 VM会自动检测它何时在docker容器中运行，并使用一种机制来检测VM何时处于空闲状态。检测到空闲状态时，OpenJ9运行垃圾收集周期并将可用内存页释放回操作系统。同时压缩对象Heap堆以充分利用可用内存, 以进行进一步的应用程序处理。对于根据内存使用的某些收费的云服务，保持较小的占用空间可以节省成本。对于这类调整此过程的调整选项的详细信息，请参阅[-XX:IdleTuningMinIdleWaitTime](xxidletuningminidlewaittime.md).
 
-  The OpenJ9 VM automatically detects when it is running in a docker container and uses a mechanism to detect when the VM is idle. When an idle state is detected, OpenJ9 runs a garbage collection cycle and releases free memory pages back to the operating system. The object heap is also compacted to make best use of the available memory for further application processing. For cloud services that charge based on memory usage, maintaining a small footprint can generate cost savings. For more information about tuning options that control this process, see [-XX:IdleTuningMinIdleWaitTime](xxidletuningminidlewaittime.md).
+### 加密操作
 
-### Cryptographic operations
+OpenJDK默认使用内置的Java加密类进行了实现。但是，本地系统加密实现通常可提供更好的性能。OpenSSL是一种用于传输层安全性（TLS）和安全套接字层（SSL）协议的本机开源加密工具包，它已经很好地建立并与许多企业应用程序一起使用。目前，Digest，CBC，GCM和RSA算法支持OpenSSL V1.0.x和V1.1.x实现。ChaCha20和ChaCha20-Poly1305算法也支持OpenSSL V1.1.x实现。
 
-OpenJDK uses the in-built Java cryptographic implementation by default. However, native cryptographic implementations
-typically provide better performance. OpenSSL is a native open source cryptographic toolkit for Transport Layer Security (TLS) and
-Secure Sockets Layer (SSL) protocols, which is well established and used with many enterprise applications. The OpenSSL V1.0.x and V1.1.x implementations are currently supported for the Digest, CBC, GCM, and RSA algorithms. The OpenSSL V1.1.x implementation is also supported for the ChaCha20 and ChaCha20-Poly1305 algorithms.
+<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> **Restriction:** ![Start of content that applies to Java 8 and later](cr/java8plus.png) 由于问题 [#5611](https://github.com/eclipse/openj9/issues/5611), 这种摘要算法是被禁止的. ![End of content that applies to Java 8 and later)](cr/java_close_lts.png)
 
-<i class="fa fa-exclamation-triangle" aria-hidden="true"></i> **Restriction:** ![Start of content that applies to Java 8 and later](cr/java8plus.png) Due to issue [#5611](https://github.com/eclipse/openj9/issues/5611), the Digest algorithm is currently disabled. ![End of content that applies to Java 8 and later)](cr/java_close_lts.png)
+在Linux和AIX平台上，可以在系统路径上找到OpenSSL 1.0.x或1.1.x的相关库。如果使用安装包管理器安装的OpenSSL，系统路径将自动配置更新好。在其他平台上，OpenSSL 1.1.x库目前与AdoptOpenJDK中的二进制文件捆绑在一起。
 
-On Linux and AIX platforms, the OpenSSL 1.0.x or 1.1.x library is expected to be found on the system path. If you use a package manager to install OpenSSL, the system path will be updated automatically. On other platforms, the OpenSSL 1.1.x library is currently bundled with the binaries from AdoptOpenJDK.
+默认情况下，为所有支持的算法都启用对OpenSSL的支持。如果要限制对特定算法的支持，可以使用一些系统属性来调整实现。
 
-OpenSSL support is enabled by default for all supported algorithms. If you want to limit support to specific algorithms, a number of
-system properties are available for tuning the implementation.
+通过在命令行上设置以下系统属性，可以自由的禁用每一个算法：
 
-Each algorithm can be disabled individually by setting the following system properties on the command line:
+- 要关闭 **Digest** 摘要算法, 设置 `-Djdk.nativeDigest=false` (查看 **限制**. 此系统属性不能启用摘要算法)
+- 要关闭 **ChaCha20** 和 **ChaCha20-Poly1305**, 设置 `-Djdk.nativeChaCha20=false`. <i class="fa fa-pencil-square-o" aria-hidden="true"></i> **注意:** ![Start of content that applies to Java 8 (LTS)](cr/java8.png) ![Start of content that applies to Java 12 (LTS)](cr/java12.png) 这些算法是不在 Java 8 or 12上支持的![End of content that applies only to Java 8 and 12 (LTS)](cr/java_close_lts.png)
+- 要关闭 **CBC**, 设置 `-Djdk.nativeCBC=false`
+- 要关闭 **GCM**, 设置 `-Djdk.nativeGCM=false`
+- 要关闭 **RSA**, 设置 `-Djdk.nativeRSA=false`
 
-- To turn off **Digest**, set `-Djdk.nativeDigest=false` (See **Restriction**. This system property cannot be used to enable the Digest algorithm)
-- To turn off **ChaCha20** and **ChaCha20-Poly1305**, set `-Djdk.nativeChaCha20=false`. <i class="fa fa-pencil-square-o" aria-hidden="true"></i> **Note:** ![Start of content that applies to Java 8 (LTS)](cr/java8.png) ![Start of content that applies to Java 12 (LTS)](cr/java12.png) These algorithms are not supported on Java 8 or 12![End of content that applies only to Java 8 and 12 (LTS)](cr/java_close_lts.png)
-- To turn off **CBC**, set `-Djdk.nativeCBC=false`
-- To turn off **GCM**, set `-Djdk.nativeGCM=false`
-- To turn off **RSA**, set `-Djdk.nativeRSA=false`
-
-You can turn off all the algorithms by setting the following system property on the command line:
+您可以通过在命令行上设置以下系统属性来关闭所有算法：
 
 ```
 -Djdk.nativeCrypto=false
 ```
 
-To build a version of OpenJDK with OpenJ9 that includes OpenSSL support, follow the steps in our detailed build instructions:
+要使用包含OpenSSL支持的OpenJ9来构建OpenJDK的版本，请按照详细构建说明中的步骤操作：
 
-- [OpenJDK 8 with OpenJ9](https://github.com/eclipse/openj9/blob/master/doc/build-instructions/Build_Instructions_V8.md).
-- [OpenJDK 11 with OpenJ9](https://github.com/eclipse/openj9/blob/master/doc/build-instructions/Build_Instructions_V11.md).
-- [OpenJDK 12 with OpenJ9](https://github.com/eclipse/openj9/blob/master/doc/build-instructions/Build_Instructions_V12.md).
+- [基于OpenJDK 8 的 OpenJ9](https://github.com/eclipse/openj9/blob/master/doc/build-instructions/Build_Instructions_V8.md).
+- [基于OpenJDK 11 的 OpenJ9](https://github.com/eclipse/openj9/blob/master/doc/build-instructions/Build_Instructions_V11.md).
+- [基于OpenJDK 12 的 OpenJ9](https://github.com/eclipse/openj9/blob/master/doc/build-instructions/Build_Instructions_V12.md).
 
-<i class="fa fa-pencil-square-o" aria-hidden="true"></i> **Note:** If you obtain an OpenJDK with OpenJ9 build from [AdoptOpenJDK](https://adoptopenjdk.net/) that includes OpenSSL or build a version yourself that includes OpenSSL support, the following acknowledgements apply in accordance with the license terms:
+<i class="fa fa-pencil-square-o" aria-hidden="true"></i> **注意:** If you obtain an OpenJDK with OpenJ9 build from [AdoptOpenJDK](https://adoptopenjdk.net/) that includes OpenSSL or build a version yourself that includes OpenSSL support, the following acknowledgements apply in accordance with the license terms:
 
-- *This product includes software developed by the OpenSSL Project for use in the OpenSSL Toolkit. (http://www.openssl.org/).*
-- *This product includes cryptographic software written by Eric Young (eay@cryptsoft.com).*
+如果你获得了包括OpenSSL支持的OpenJDK与OpenJ9的构建物从[AdoptOpenJDK](https://adoptopenjdk.net/), 或者建立一个包括OpenSSL的支持的自己的版本，确认申请需要按照下面的许可证条款：
+
+- *本产品包含由OpenSSL Project开发的用于OpenSSL Toolkit的软件（http://www.openssl.org/）。*
+- *本产品包含由Eric Young（eay@cryptsoft.com）编写的加密软件。*
 
 
-## Runtime options
+## 运行时选项
 
-Runtime options are specified on the command line and include system properties, standard options, nonstandard (**-X**) options, and **-XX** options. For a detailed list of runtime options, see [OpenJ9 command-line options](cmdline_specifying.md)
+运行时选项在命令行中指定，包括系统属性，标准选项，非标准（**-X**）选项和 **-XX** 选项等。有关运行时选项的详细列表，请参阅[OpenJ9 命令行选项](cmdline_specifying.md)
 
-## Default settings
+## 默认设置
 
-If you do not specify any options on the command line at run time, the OpenJ9 VM starts with default settings that define how it operates. For more information about these settings, see [Default settings for the OpenJ9 VM](openj9_defaults.md).
+如果在运行时未在命令行上指定任何选项，则OpenJ9 VM将使用定义好的其默认设置启动。有关这些设置的详细信息，请参阅[OpenJ9 VM 默认设置](openj9_defaults.md)。
 
-## ![Start of content that applies to Java 11 (LTS) and later](cr/java11plus.png) Using Jlink
+## ![Start of content that applies to Java 11 (LTS) and later](cr/java11plus.png) 使用 Jlink
 
-On Java 11 and later, you can use the `jlink` utility to create a custom OpenJ9 runtime image, which allows you to optimize image size.
-If you do not require translations from the English language, the translation files can be removed to further optimize the size. You can achieve this by specifying the `--exclude-files=**java_**.properties` option when you run `jlink`. The default English `java.properties` file is unaffected.
+在Java 11及更高版本中，您可以使用该`jlink`实用程序创建自定义的OpenJ9运行时映像，例如可以可以优化映像大小。如果您不需要英语翻译，可以删除翻译文件以进一步优化大小。您可以通过`--exclude-files=**java_**.properties`在运行时指定选项来实现特殊目标的`jlink`。默认的英文`java.properties`文件则不受影响。
 
-## Troubleshooting
+## 故障排除
 
-The OpenJ9 diagnostic component contains extensive features to assist with problem determination. Diagnostic data is produced under default conditions, but can also be controlled by starting the VM with the [-Xdump option](xdump.md) or using the `com.ibm.jvm.Dump` API. You can also trace Java applications, methods, and VM operations by using the [-Xtrace option](xtrace.md).
+OpenJ9诊断组件包含大量功能来帮助和确认问题。诊断数据在默认条件下生成，但也可以通过使用[-Xdump option](xdump.md)选项或使用`com.ibm.jvm.DumpAPI` 启动VM来进一步控制。您还可以使用[-Xtrace option](xtrace.md)选项跟踪Java应用程序，方法和VM的内部操作等。
 
-To get started, read [Diagnostic tools and data](diag_overview.md).
-
+要开始尝试，请阅读[诊断工具和数据](diag_overview.md)。
 
 <!-- ==== END OF TOPIC ==== index.md ==== -->
